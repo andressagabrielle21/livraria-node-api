@@ -1,22 +1,21 @@
-import express from 'express';
-import connectOnDB from './config/dbConnect.js';
+import express from "express";
+import db from "./config/dbConnect.js";
 // import livro from './models/Livro.js';
-import routes from './routes/index.js';
+import routes from "./routes/index.js";
 
-const connection = await connectOnDB();
+// const connection = await connectOnDB();
 // .on() normalmente é um método de eventos
-connection.on("error", (error) => {
-  console.error("Erro de conexão!", error)
-})
+db.on("error", console.log.bind(console, "Erro de conexão!"));
 
-connection.once("open", () => {
-  console.log("Conexão estabelecida com sucesso.");
-})
+db.once("open", () => {
+	console.log("Conexão estabelecida com sucesso.");
+});
 
 // ROTAS DO EXPRESS (CRUD) para criação do servidor HTTP
 
 const app = express();
-routes(app)
+app.use(express.json());
+routes(app);
 // Middleware: 
 // app.use(express.json())
 
@@ -93,7 +92,7 @@ export default app;
 // PUT pode ser usado em situações em que há acesso ao recurso completo (por exemplo, todos os 
 // campos do documento a ser atualizado) ou a necessidade de substituir totalmente o recurso. 
 // É necessário enviar sempre o recurso completo (com todos os campos);
-    // - PUT é considerado um método idempotente e sem efeitos colaterais, ao contrário de PATCH, e por isso um método “seguro”.
+// - PUT é considerado um método idempotente e sem efeitos colaterais, ao contrário de PATCH, e por isso um método “seguro”.
 
 // PATCH pode ser usado para atualizações parciais e pode receber apenas o campo que será 
 // atualizado, o que pode significar menor volume de tráfego de dados.

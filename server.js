@@ -1,15 +1,9 @@
 // import http from "http";
-import "dotenv/config"
-import app from './src/app.js'
+import "dotenv/config";
+import app from "./src/app.js";
 // Servidor local HTTP que simula um servidor que está na internet
 
-const PORT = 3000
-
-// const rotas = {
-//   "/": "My first server",
-//   "/livros": "Rota livros Olhai os lírios do campo",
-//   "/autores": "Rota autores Érico Verissimo",
-// }
+const PORT = 3000;
 
 // O produto final de uma API é um conjunto de rotas
 
@@ -26,10 +20,10 @@ const PORT = 3000
 // ficar escutando as requisições e geralmente já o chamamos depois do servidor estar criado
 
 app.listen(PORT, () => {
-  // Evento de conexão
-  // 300 é o número da porta que esse evento ocorrerá
-  console.log("The server is listening!")
-})
+	// Evento de conexão
+	// 300 é o número da porta que esse evento ocorrerá
+	console.log("The server is listening!");
+});
 
 
 // Ao adicionar type:module no package.json, é ativado o EcmaScript modules onde 

@@ -1,3 +1,10 @@
+# --- NODE.JS ---- #
+ - é uma plataforma onde podemos executar códigos que utilizam essa linguagem do 
+    lado do servidor (ou server-side)
+ - O Node se baseou na máquina virtual utilizada pelo Google, para criar o seu próprio ambiente 
+    de execução. 
+      - A máquina virtual compila os códigos JavaScript para linguagem de máquina antes de sua execução.
+
 ## IDEMPOTENTE
 
 - Para ser idempotente, somente o estado atual do back-end de um servidor deve ser considerado, 
@@ -50,6 +57,9 @@ NoSQL -> Bancos de Documentos/Objetos (Pode repetir dados)
         - Visa evitar duplicação de dados
         * Por outro lado, a junção de dados via referência faz com que uma consulta se transforme
             em duas ou várias.
+    
+  -> Data in MongoDB has a flexible schema model  
+    - To ensure consistency in your data model, you can create schema validation rules.
 
 
 ## MongoDB Atlas ##
