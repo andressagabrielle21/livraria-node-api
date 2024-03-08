@@ -1,0 +1,122 @@
+## IDEMPOTENTE
+
+- Para ser idempotente, somente o estado atual do back-end de um servidor deve ser considerado, 
+  o código de status retornado por cada requisição pode variar: a primeira chamada de um DELETE 
+  vai provavelmente retornar um 200, enquanto as chamadas sucessivas vão provavelmente retornar 404.
+
+- Todos os métodos seguros são idempotentes.
+
+- Implementados corretamente, o GET, HEAD, PUT, e DELETE são métodos idempotentes, 
+  mas não o método POST.
+
+## SQL (MySQL, PostgreSQL) x NoSQL (MongoDB) ##
+
+SQL -> Linguagem de Consulta Estruturada (Tabelas RELACIONAIS)
+    Faz referências entre tabelas, sem repetir informações
+    - Cenários onde regras sobre cada conjunto de dados e relacionamentos entre diferentes 
+      conjuntos são bem definidos
+    - Em bancos SQL, a avaliação de requisitos e modelagem dos dados costuma ser feita de 
+      forma adiantada com relação à aplicação
+    - O excesso de regras, ocasionalmente, afetam a velocidade de manutenção desse sistema
+    - Escalabilidade vertical
+
+
+NoSQL -> Bancos de Documentos/Objetos (Pode repetir dados)
+      - Onde cada conjunto de dados pode ser visto de forma independente.
+      - Sem relacionamento entre um objeto e outro
+      - Maior facilidade de escabilidade horizontal
+      Facilita o manejo de estruturas mais complexas, sendo mais rápido
+      Todas as informações de um objeto estão no mesmo lugar, não estando em variadas tabelas
+
+      - Chave-Valor: Outro tipo de BD não relacional
+        -> Quando um único identificador representa um único valor.
+        -> Rápido acesso
+        Ex: Redis, Memcached
+      
+      - Grafos: Quando múltiplos relacionamentos entre diversas entidades pequenas são necessários.
+        -> Por ter entidades (nós) pequenas, tende a ter uma ótima performance em grandes volumes de dados
+
+  *** AMBOS OS TIPOS DE DADOS ADEREM ESTES TIPOS DE RELACIONAMENTOS:
+    -> Relacionamento One-to-One (1:1)
+    -> Relacionamento One-to-Many (1:n)
+    -> Relacionamento Many-to-Many (n:m)
+
+  *** Formas de fazer estes relacionamentos (Modelos):
+    -> Embedding: incorporar dados que são relacionados e inseri-los em um documento
+        * Incorporar dados em um único documento pode criar documentos muito grandes
+
+    -> Referencing: fazer referência a documentos em outra coleção. Nesse caso, os dados são 
+        guardados em coleções separadas, mas ainda é importante que mantenham vínculo entre eles
+        - Visa evitar duplicação de dados
+        * Por outro lado, a junção de dados via referência faz com que uma consulta se transforme
+            em duas ou várias.
+
+
+## MongoDB Atlas ##
+  - Serviço hospedado em nuvem
+
+  - Intermediário entre Node.js e MongoDB:
+
+
+## SERVERS ## 
+  - O servidor que criamos para “servir” (ou fornecer) os dados da nossa API é voltado 
+    para uma aplicação capaz de receber dados, processá-los e enviar respostas.
+
+  - Outros tipos de servidores:
+    - Servidores de banco de dados: armazenam, gerenciam e acessam bancos de dados
+    - Servidores de arquivos: armazenam arquivos e dados
+    - Servidores de arquivos estáticos: servidores de arquivos estáticos apenas “entregam” 
+        os arquivos solicitados pela requisição.
+    
+  - NUVEM   
+    -> Devemos sempre lembrar que a nuvem é, entre muitas aspas, “o servidor de outra pessoa”.
+    -> Ao utilizarmos a nuvem, terceirizamos muito do trabalho de manutenção dos servidores 
+        para os provedores destes serviços, como AWS, Google Cloud, MS Azure, entre outros.
+    -> Os princípios são os mesmos.
+
+## Mongoose
+  - MongoDB é o Banco de dados
+  - Mongoose é biblioteca que faz a conexão entre o MongoDB e a API
+  - Prisma é uma alternativa de conexão entre APIs Node.js e MongoDB
+
+## Models e Schemas
+  MODEL => Um objeto que representa uma coleção na base de dados
+    - É uma interface para que uma API interaja com os documentos de uma coleção
+  SCHEMA => Objeto de configuração que define a estrutura e as propriedades de um documento
+
+  - Não são termos próprios do Mongo ou do Mongoose, são termos usados em API e BDs
+
+****  No caso de funções callback, a palavra-chave ASYNC deve ser adicionada ANTES DOS PARÊMETROS
+      e await ANTES da instrução da variável.
+
+      - No caso de declarações de função, async deve ser adicionada antes de function
+
+## Models & Controllers
+  # MVC (Model View Controller)
+  - MODELS => Responsável por gerenciar o relacionamento entre a API e a camada de dados, 
+            incluindo validação, armazenamento e manipulação dos dados, interação 
+            com a base de dados e suas regras.
+  - CONTROLLERS => Atuam como intermediários entre a camada responsável pelo recebimento 
+            dos inputs de dados, que em nossa API está sendo feito através das rotas, e os models.
+
+  * A comunicação entre as camadas de model e controller é uma caminho de ida e volta
+    - O model vai repassar o resultado da consulta para o controller para que seja processada e 
+      transformada na resposta HTTP no formato adequado e com as informações esperadas
+
+## TRY // CATCH
+    - O try/catch funciona também para captura e tratamento de possíveis erros em operações assíncronas, 
+      como as que envolvem justamente operações em bancos ou outras APIs.
+    - O try/catch é uma estrutura usada justamente quando é necessário capturar e manejar erros de forma 
+      mais precisa, permitindo que os erros sejam “capturados e tratados” internamente pela função e evitando
+      que a aplicação pare de funcionar ou que o cliente receba respostas inesperadas.
+
+
+## Quando falamos de APIs como “pontos de contato” entre aplicações, é importante notar 
+  que este contato se dá justamente através de cada uma das URLs utilizadas, que dentro 
+  do contexto da API chamamos de ROTAS.
+    - ex: https://cursos.alura.com.br:443/search?query=express
+      -> 'search' é a rota ou path, assim como nossa API tem as rotas livros e autores
+          * Rotas também podem ser usadas para a localização de recursos no servidor
+      -> '?query=express' são os query parameters ou parâmetros de busca
+          * Uma URL pode conter vários parâmetros encadeados, separados por '&'
+
