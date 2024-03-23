@@ -1,52 +1,70 @@
 // Quando exportamos uma lista de módulos, diferente de um "export default", devemos importar entre chaves
+import NotFound from "../errors/NotFound.js";
 import {autor} from "../models/Autor.js";
 
 class AutorController {
-	static listAuthors = async (req, res) => {
+	static listAuthors = async (req, res, next) => {
 		try {
 			const listAuthor = await autor.find({});
 			res.status(200).json(listAuthor);
 		} catch (error) {
-			res.status(500).json({message: `${error} - Falha na requisição`});
+			next(error);
+			// res.status(500).json({message: `${error} - Falha na requisição`});
 		}
 	};
 
-	static AuthorById = async (req, res) => {
+	static AuthorById = async (req, res, next) => {
 		try {
 			const id = req.params.id;
 			const listAuthorId = await autor.findById(id);
-			res.status(200).json(listAuthorId);
+			if (listAuthorId !== null) {
+				res.status(200).json(listAuthorId);
+			} else {
+				next(new NotFound("FALHA AO ENCONTRAR AUTOR."));
+			}
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO ENCONTRAR AUTOR.`});
+			next(error);
 		}
 	};
 
-	static newAuthor = async (req, res) => {
+	static newAuthor = async (req, res, next) => {
 		try {
-			const addNewAuthor = await autor.create(req.body);
-			res.status(201).json({message: "Autor cadastrado!", autor: addNewAuthor});
+			let addNewAuthor = new autor(req.body);
+			const addedAuthor = await addNewAuthor.save();
+			res.status(201).send(addedAuthor.toJSON());
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO CADASTRAR AUTOR.`});
+			next(error);
+			// res.status(500).json({message: `${error.message} - FALHA AO CADASTRAR AUTOR.`});
 		}
 	};
 
-	static editAuthor = async (req, res) => {
-		try {
-			const id = req.params.id;
-			await autor.findByIdAndUpdate(id, req.body);
-			res.status(200).json({message: "Autor atualizado!"});
-		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO EDITAR AUTOR.`});
-		}
-	};
-
-	static deleteAuthor = async (req, res) => {
+	static editAuthor = async (req, res, next) => {
 		try {
 			const id = req.params.id;
-			await autor.findByIdAndDelete(id, req.body);
-			res.status(200).json({message: "Autor removido com sucesso!"});
+			const foundAuthor = await autor.findByIdAndUpdate(id, {$set: req.body});
+			if (foundAuthor !== null) {
+				res.status(200).send({message: "Autor atualizado!"});
+			} else {
+				next(new NotFound("Falha ao editar autor. Tente novamente"));
+			}
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO DELETAR AUTOR.`});
+			next(error);
+		}
+	};
+
+	static deleteAuthor = async (req, res, next) => {
+		try {
+			const id = req.params.id;
+			const foundAuthor = await autor.findByIdAndDelete(id, req.body);
+
+			if (foundAuthor !== null) {
+				res.status(200).send({message: "Autor removido com sucesso!"});
+			} else {
+				next(new NotFound("Falha ao deletar autor. Autor não localizado."));
+			}
+		} catch (error) {
+			next(error);
+			// res.status(500).send({message: `${error.message} - FALHA AO DELETAR AUTOR.`});
 		}
 	};
 }

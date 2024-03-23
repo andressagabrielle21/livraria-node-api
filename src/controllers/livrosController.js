@@ -1,68 +1,87 @@
 // Interface entre cada requisição e o que irá acontecer em cada requisição
+import NotFound from "../errors/NotFound.js";
 import livro from "../models/Livro.js";
-import {autor} from "../models/Autor.js";
 
 class LivroController {
 	// static é quando queremos utilizar métodos de uma classe, sem precisar instanciar a mesma
-	static listBooks = async (req, res) =>  {
+	static listBooks = async (req, res, next) =>  {
 		try {
-			const listBook = await livro.find({});
+			//Referecing form
+			const listBook = await livro.find().populate("autor").exec();
 			res.status(200).json(listBook);
 		} catch (error) {
-			res.status(500).json({message: `${error} - Falha na requisição`});
+			// 500 é um problema no servidor
+			next(error);
+			// res.status(500).json({message: `${error} - Falha na requisição`});
 		}
 	};
 
-	static bookById = async (req, res) =>  {
+	static bookById = async (req, res, next) =>  {
 		try {
+			// Quando obtemos um valor por parâmetro de rota da URL, ele sempre retorna como string.
 			const id = req.params.id;
-			const listBookId = await livro.findById(id);
-			res.status(200).json(listBookId);
+			const listBookId = await livro.findById(id).populate("autor", "nome").exec();
+			if (listBookId !== null) {
+				res.status(200).send(listBookId);
+			} else {
+				// 404 -> quando um recurso não é localizado
+				next(new NotFound("Livro não encontrado."));
+			}
 		} catch (error) {
-			// 500 é um problema no servidor
-			res.status(500).json({message: `${error.message} - FALHA AO ENCONTRAR LIVRO.`});
+			next(error);
 		}
 	};
   
-	static newBook = async (req, res) =>  {
-		const addNewBook = req.body;
+	static newBook = async (req, res, next) =>  {
 		try {
-			const findAuthor = await autor.findById(addNewBook.autor);
-			const fullBook = {...addNewBook, autor: {...findAuthor._doc}};
-			const addedBook = await livro.create(fullBook);
-			res.status(201).json({message: "Livro cadastrado!", livro: addedBook});
+			let addNewBook = new livro(req.body);
+			const addedBook = await addNewBook.save();
+
+			res.status(201).send(addedBook.toJSON());
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO CADASTRAR LIVRO.`});
+			next(error);
+			// res.status(500).json({message: `${error.message} - FALHA AO CADASTRAR LIVRO.`});
 		}
 	};
 
-	static editBook = async (req, res) => {
+	static editBook = async (req, res, next) => {
 		try {
 			const id = req.params.id;
-			await livro.findByIdAndUpdate(id, req.body);
-			res.status(200).json({message: "Livro atualizado!"});
+			const foundBook = await livro.findByIdAndUpdate(id, {$set: req.body});
+			if (foundBook !== null) {
+				res.status(200).send({message: "Livro atualizado!"});
+			} else {
+				next(new NotFound("Falha ao editar livro. Tente novamente."));
+			}
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO EDITAR LIVRO.`});
+			next(error);
+			// res.status(500).send({message: `${error.message} - FALHA AO EDITAR LIVRO.`});
 		}
 	};
 
-	static deleteBook = async (req, res) => {
+	static deleteBook = async (req, res, next) => {
 		try {
 			const id = req.params.id;
-			await livro.findByIdAndDelete(id, req.body);
-			res.status(200).json({message: "Livro removido com sucesso!"});
+			const foundBook = await livro.findByIdAndDelete(id);
+			if (foundBook !== null) {
+				res.status(200).send({message: "Livro removido com sucesso!"});
+			} else {
+				next(new NotFound("Falha ao deletar livro. Tente novamente."));
+			}
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA AO DELETAR LIVRO.`});
+			next(error);
+			// res.status(500).send({message: `${error.message} - FALHA AO DELETAR LIVRO.`});
 		}
 	};
 
-	static listBooksByEditor = async (req, res) => {
-		const editor = req.query.editora;
+	static listBooksByEditor = async (req, res, next) => {
 		try {
+			const editor = req.query.editora;
 			const booksByEditor = await livro.find({editora: editor});
-			res.status(200).json(booksByEditor);      
+			res.status(200).send(booksByEditor);      
 		} catch (error) {
-			res.status(500).json({message: `${error.message} - FALHA NA BUSCA.`});
+			next(error);
+			// res.status(500).json({message: `${error.message} - FALHA NA BUSCA.`});
 		}
 	};
 }

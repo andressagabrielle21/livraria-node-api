@@ -1,4 +1,3 @@
-// import http from "http";
 import "dotenv/config";
 import app from "./src/app.js";
 // Servidor local HTTP que simula um servidor que está na internet
@@ -9,12 +8,6 @@ const PORT = 3000;
 
 // Através do método createServer toda vez que o servidor HTTP receber
 // uma requisição, a função de callback passada para o método será executada.
-
-// const server = http.createServer((req, res) => {
-//   // Cabeçalho de requisição
-//   res.writeHead(200, {"Content-Type": "text/plain"})
-//   res.end(rotas[req.url])
-// })
 
 // O método listen é o que vai definir o endereço no qual o servidor vai 
 // ficar escutando as requisições e geralmente já o chamamos depois do servidor estar criado

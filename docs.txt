@@ -4,6 +4,20 @@
  - O Node se baseou na máquina virtual utilizada pelo Google, para criar o seu próprio ambiente 
     de execução. 
       - A máquina virtual compila os códigos JavaScript para linguagem de máquina antes de sua execução.
+ - o Node.js permite que várias ações sejam realizadas paralelamente, otimizando o aproveitamento dos 
+    recursos, tendo uma característica chamada de “não bloqueante”.
+
+* Todo processo de requisição-resposta usando HTTP é sempre iniciado pelo lado cliente da requisição
+
+## PUT x PATCH
+ - PUT pode ser usado em situações em que há acesso ao recurso completo (por exemplo, todos os 
+    campos do documento a ser atualizado) ou a necessidade de substituir totalmente o recurso. 
+  -> É necessário enviar sempre o recurso completo (com todos os campos);
+  -> PATCH pode ser usado para atualizações parciais e pode receber apenas o campo que será 
+      atualizado, o que pode significar menor volume de tráfego de dados.
+
+- PUT é considerado um método idempotente e sem efeitos colaterais, ao contrário de PATCH, e por isso um método “seguro”.
+
 
 ## IDEMPOTENTE
 
@@ -129,4 +143,59 @@ NoSQL -> Bancos de Documentos/Objetos (Pode repetir dados)
           * Rotas também podem ser usadas para a localização de recursos no servidor
       -> '?query=express' são os query parameters ou parâmetros de busca
           * Uma URL pode conter vários parâmetros encadeados, separados por '&'
+
+## Front x Back  
+  - Devemos evitar de enviar para o cliente detalhes técnicos internos da nossa aplicação
+    * Especialmente em situações que envolvam o BD
+  - Mesmo que o front-end possa tratar a nossa requisição e mostrar uma mensagem de erro 
+    mais apropriada ao usuário final, ainda assim estamos expondo informações da API nas respostas.
+  - Essas mensagens de erros do Banco de Dados servem apenas para as pessoas 
+    desenvolvedoras da API
+  
+  - Ao mesmo tempo que não devemos expor detalhes internos da API, devemos 
+    retornar informações semânticas que sejam úteis ao usuário final.
+      * se tiver havido um erro de requisição por parte do cliente, o erro deve 
+        informar apropriadamente que foi fornecida uma informação inválida e o código de 
+        status deve ser 400.
+
+
+## ERROS
+  -> Tanto no MongoDB quanto no Mongoose, um ObjectId deve ser uma sequência de 12 ou 24 
+    caracteres hexadecimais. Se o método findById receber uma string que não cumpre esses
+    requisitos, ele falhará em converter a string para o tipo ObjectId e lançará um CastError.
+
+## MIDDLEWARE
+  -> Funções que interceptam alguma ação (requisições feitas para API).
+  -> Função que será executada em toda requisição para a API
+  -> Existem vários tipos de middlewares
+  -> O Middleware de Error, especial do Express, recebe QUATRO parâmetros. 
+  -> Os métodos de controladores da API também são middlewares do Express!
+    * Eles são o tipo mais convencional de middleware, que recebem até três parâmetros.
+    * Quando uma requisição é feita para uma determinada rota da API, esses métodos 
+      executam um determinado código (recebem parâmetros da requisição, acessam o banco 
+      de dados, etc) e devolvem uma resposta para o cliente.
+  -> A ordem em que os middlewares são registrados na aplicação é importante.
+    * A sequência dos parâmetros (REQ, RES) também importam
+
+  ** An Express application is essentially a series of middleware function calls.
+
+  * E se um middleware enviar uma resposta para o cliente (nesse caso, 'send'), 
+    o fluxo da requisição encerra nessa resposta, e quaisquer middlewares registrados depois 
+    desse não serão executados.
+    -> Apenas UMA resposta pode ser enviada para cada requisição.
+  * Recebemos o parâmtro (NEXT) para executar os próximos middlewares registrados no código.
+
+  ## Dentro de um middleware, se você não executar a função next e nem enviar uma resposta 
+    para o cliente, a requisição ficará em processamento até ser encerrada por causa 
+    do longo tempo de espera de resposta do servidor.
+
+## Erros Operacionais  x  Erros de Programação
+  - Os erros operacionais são dados incorretos vindo do front-end, ou mesmo um problema 
+    interno do Banco de Dados.
+
+  - Já os erros de programação, os famosos bugs, envolvem um erro de escrita do próprio 
+    código, como um erro de sintaxe ou o erro de tentar acessar um propriedade de null 
+    ou undefined
+
+
 

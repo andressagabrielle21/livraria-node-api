@@ -9,6 +9,7 @@ const routes = (app) => {
 
 	//.use é um método que se utiliza para incluir middlewares na instância do express
 	app.use(express.json(), livros, autores);
+	// express.json é um middleware nativo do express para converter a resposta para JSON
 
 };
 
