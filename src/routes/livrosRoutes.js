@@ -1,14 +1,15 @@
 import express from "express";
 import LivroController from "../controllers/livrosController.js";
+import paginator from "../middlewares/paginator.js";
 
 // roteador do Express capaz de registrar um grupo de middlewares para determinadas 
 // rotas e métodos HTTP, para proporcionar maior organização na aplicação
 const routes = express.Router();
 
 // Quais funções serão chamadas no momento é feita uma requisição para cada uma dessas rotas abaixo
-routes.get("/livros", LivroController.listBooks);
+routes.get("/livros", LivroController.listBooks, paginator);
 // Parâmetro de query (consulta)
-routes.get("/livros/search", LivroController.listBooksByEditor);
+routes.get("/livros/search", LivroController.listBooksByFilter, paginator);
 
 routes.get("/livros/:id", LivroController.bookById);
 routes.post("/livros", LivroController.newBook);

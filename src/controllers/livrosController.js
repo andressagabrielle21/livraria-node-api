@@ -1,14 +1,15 @@
 // Interface entre cada requisição e o que irá acontecer em cada requisição
 import NotFound from "../errors/NotFound.js";
-import livro from "../models/Livro.js";
-
+import {autor as autores, livro} from "../models/index.js";
+// import autopopulate from "mongoose-autopopulate";
 class LivroController {
 	// static é quando queremos utilizar métodos de uma classe, sem precisar instanciar a mesma
 	static listBooks = async (req, res, next) =>  {
 		try {
-			//Referecing form
-			const listBook = await livro.find().populate("autor").exec();
-			res.status(200).json(listBook);
+			const searchBook = livro.find();
+			req.results = searchBook;
+
+			next();
 		} catch (error) {
 			// 500 é um problema no servidor
 			next(error);
@@ -20,7 +21,7 @@ class LivroController {
 		try {
 			// Quando obtemos um valor por parâmetro de rota da URL, ele sempre retorna como string.
 			const id = req.params.id;
-			const listBookId = await livro.findById(id).populate("autor", "nome").exec();
+			const listBookId = await livro.findById(id, {}, {autopopulate: false}).populate("autor");
 			if (listBookId !== null) {
 				res.status(200).send(listBookId);
 			} else {
@@ -74,16 +75,48 @@ class LivroController {
 		}
 	};
 
-	static listBooksByEditor = async (req, res, next) => {
+	static listBooksByFilter = async (req, res, next) => {
 		try {
-			const editor = req.query.editora;
-			const booksByEditor = await livro.find({editora: editor});
-			res.status(200).send(booksByEditor);      
+			const search = await loadSearch(req.query);
+
+			if (search !== null) {
+				const booksByFilter = livro.find(search);
+
+				req.results = booksByFilter;
+				next();
+			} else {
+				res.status(200).send([]);
+			}
+
 		} catch (error) {
 			next(error);
 			// res.status(500).json({message: `${error.message} - FALHA NA BUSCA.`});
 		}
 	};
+}
+
+async function loadSearch (params) {
+	const {editora, titulo, minPages, maxPages, nomeAutor} = params;
+
+	let search = {};
+
+	if (editora) search.editora = editora;
+	// Operadores do MongoDB, caso os valores sejam objetos: { $regex: titulo, $options: "i"}
+	if (titulo) search.titulo = new RegExp(titulo, "i");
+	if (minPages) {search.paginas = {$gte: minPages};}
+	if (maxPages) {search.paginas = {$lte: maxPages};}
+
+	if (nomeAutor) {
+		const autor = await autores.findOne({nome: nomeAutor});
+
+		if (autor !== null) {
+			search.autor = autor._id;
+		} else {
+			search = null;
+		}
+	}
+
+	return search;
 }
 
 export default LivroController;

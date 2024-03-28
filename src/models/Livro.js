@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import autopopulate from "mongoose-autopopulate";
 
 // Schema é um objeto de configuração que define a estrutura e as propriedades de um documento
 const livrosSchema = new mongoose.Schema({
@@ -10,7 +11,8 @@ const livrosSchema = new mongoose.Schema({
 	autor: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "autores",
-		required: [true, "O(a) autor(a) é obrigatório"]
+		required: [true, "O(a) autor(a) é obrigatório"],
+		autopopulate: {select: "nome"}
 	},
 	editora: {
 		type: String,
@@ -33,6 +35,7 @@ const livrosSchema = new mongoose.Schema({
 }, {versionKey: false});
 
 // ("Collection do BD que se refere", O Schema/propriedades)
+livrosSchema.plugin(autopopulate);
 const livro = mongoose.model("livros", livrosSchema);
 
 export default livro;

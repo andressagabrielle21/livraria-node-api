@@ -1,12 +1,15 @@
 // Quando exportamos uma lista de módulos, diferente de um "export default", devemos importar entre chaves
 import NotFound from "../errors/NotFound.js";
-import {autor} from "../models/Autor.js";
+import {autor} from "../models/index.js";
 
 class AutorController {
 	static listAuthors = async (req, res, next) => {
 		try {
-			const listAuthor = await autor.find({});
-			res.status(200).json(listAuthor);
+			// const listAuthor = await autor.find({});
+			// res.status(200).json(listAuthor);
+			const listAuthor = autor.find({});
+			req.results = listAuthor;
+			next();
 		} catch (error) {
 			next(error);
 			// res.status(500).json({message: `${error} - Falha na requisição`});
