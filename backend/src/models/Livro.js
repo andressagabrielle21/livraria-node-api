@@ -8,6 +8,10 @@ const livrosSchema = new mongoose.Schema({
 		type: String,
 		required: [true, "O título do livro é obrigatório"]
 	},
+	bookImage: {
+		type: String,
+		required: [true, "A imagem do livro é obrigatório"]
+	},
 	autor: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "autores",
