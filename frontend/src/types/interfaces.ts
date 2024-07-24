@@ -3,6 +3,7 @@ export interface ListBook {
   titulo: string,
   bookImage: string,
   autor: {
+      _id: string,
       nome: string,
       authorImage: string,
       nacionalidade: string,

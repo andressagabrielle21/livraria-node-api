@@ -9,7 +9,7 @@ const iconProps = {
 
 const Navbar = () => {
   return (
-    <div className="bg-[#171D2F] h-[90vh] p-8 w-10 rounded-lg flex flex-col justify-start items-center">
+    <div className="bg-[#171D2F] h-[calc(90%/100vh)] p-8 w-10 rounded-lg flex flex-col justify-start items-center">
       <div className="flex flex-col gap-14">
         <Link to='/'> <FaHome {...iconProps} className="hover:scale-90 transition ease-in-out delay-150"/> </Link>
 

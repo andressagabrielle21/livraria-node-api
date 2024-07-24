@@ -25,7 +25,7 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<App />}> 
           <Route index element={<ListBooks data={data}/>}/>
-          <Route path="/authors" element={<ListAuthors data={data}/>}/>
+          <Route path="/authors" element={<ListAuthors/>}/>
           <Route path="/book/:id" element={<BookDetail />}/>
         </Route>
       </Routes>

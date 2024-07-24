@@ -6,14 +6,14 @@ interface IBookCard {
 
 const BookCard = ({image, title, author}: IBookCard) => {
   return (
-    <div className="max-w-[200px] font-poppins flex flex-col rounded-lg transition ease-in-out delay-150 hover:scale-105 hover:-translate-y-1 duration-300">
+    <div className="w-[200px] font-poppins flex flex-col content-start">
       <a href=""></a>
-      <img src={image} alt={title} className="w-[200px] h-[250]  rounded-lg hover:border-2 hover:border-white hover:border-solid"/>
+      <img src={image} alt={title} className="w-[200px] h-[300px] transition ease-in-out delay-150 hover:scale-105 hover:-translate-y-1 duration-300 rounded-lg hover:border-2 hover:border-white hover:border-solid"/>
 
       <div className="mt-4">
         <h1 className="text-xl text-yellow-100 font-semibold">{title}</h1>
 
-        <span>{author || "qualquer coisa"}</span>
+        <span>{author || "Não identificado"}</span>
       </div>
 
     </div>
