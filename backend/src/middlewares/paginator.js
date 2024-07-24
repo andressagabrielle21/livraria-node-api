@@ -2,7 +2,7 @@ import ResError from "./../errors/ResError.js";
 
 export default async function paginator(req, res, next) {
 	try {
-		let {limit = 5, page = 1, sortBy = "_id: -1"} = req.query;
+		let {limit = 10, page = 1, sortBy = "_id: -1"} = req.query;
   
 		// split() separa a string em um elemento do array
 		let [sortField, order] = sortBy.split(":");

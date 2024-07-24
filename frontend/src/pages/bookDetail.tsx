@@ -1,7 +1,7 @@
-const bookDetail = () => {
+const BookDetail = () => {
   return (
-    <div>bookDetail</div>
+    <div>BookDetail</div>
   )
 }
 
-export default bookDetail
+export default BookDetail
